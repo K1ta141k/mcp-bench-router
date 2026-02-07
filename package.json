@@ -1,6 +1,6 @@
 {
   "name": "mcp-bench-router",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "MCP server that delegates design tasks to the top-ranked model on designarena.ai via OpenRouter",
   "type": "module",
   "main": "dist/index.js",
@@ -9,7 +9,8 @@
   },
   "files": [
     "dist",
-    "bin"
+    "bin",
+    "server.json"
   ],
   "scripts": {
     "build": "tsc",
@@ -47,5 +48,6 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "mcpName": "io.github.K1ta141k/mcp-bench-router"
 }

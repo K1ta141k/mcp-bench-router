@@ -2,14 +2,18 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.K1ta141k/mcp-bench-router",
   "title": "MCP Bench Router",
-  "description": "Routes design tasks to designarena.ai's current top-ranked model via OpenRouter. Live leaderboard rankings, automatic best-model selection, and direct model querying across 14 design categories.",
-  "version": "1.0.0",
+  "description": "Routes design tasks to designarena.ai's top-ranked model via OpenRouter across 14 categories.",
+  "version": "1.0.1",
+  "repository": {
+    "url": "https://github.com/K1ta141k/mcp-bench-router",
+    "source": "github"
+  },
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "mcp-bench-router",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "runtimeHint": "npx",
       "transport": { "type": "stdio" },
       "environmentVariables": [
