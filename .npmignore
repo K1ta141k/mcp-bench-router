@@ -1,0 +1,10 @@
+src/
+tsconfig.json
+vitest.config.*
+CLAUDE.md
+tests/
+.env
+.env.example
+*.png
+.playwright-mcp/
+*.tgz

@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.env
+.env.example
+*.tgz
+*.png
+.DS_Store
+.playwright-mcp/
