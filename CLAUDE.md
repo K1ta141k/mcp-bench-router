@@ -45,7 +45,13 @@ The mapper converts designarena.ai model names to OpenRouter IDs:
 
 OpenRouter IDs use **dot notation** (e.g. `anthropic/claude-sonnet-4.5`, not `claude-sonnet-4-5-20250514`).
 
-Codename models (`riftrunner`, `candycane`, `mumble`, `rockhopper`, `macaroni`, `honeycomb`) return `null` — the tools automatically fall back to the next best available model.
+Confirmed codename models are mapped to their real identities:
+- `riftrunner` → Gemini 3 Pro Preview → `google/gemini-3-pro-preview` (available on OpenRouter)
+- `obsidian` → Grok 4.20 (not yet on OpenRouter, returns `null`)
+
+Unconfirmed codename models (`candycane`, `mumble`, `rockhopper`, `macaroni`, `honeycomb`) return `null` — the tools automatically fall back to the next best available model.
+
+The `getCodenameDisplayName()` helper returns human-readable names for confirmed codenames, used in tool output formatting.
 
 ## API Details
 

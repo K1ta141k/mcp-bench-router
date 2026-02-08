@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   mapArenaToOpenRouter,
   findFirstAvailable,
+  getCodenameDisplayName,
 } from "../../src/services/model-mapper.js";
 import * as openrouter from "../../src/services/openrouter.js";
 import type { LeaderboardEntry } from "../../src/types/index.js";
@@ -20,9 +21,17 @@ beforeEach(() => {
 
 describe("mapArenaToOpenRouter", () => {
   it("returns null for codename models", async () => {
-    expect(await mapArenaToOpenRouter("riftrunner")).toBeNull();
+    expect(await mapArenaToOpenRouter("obsidian")).toBeNull();
     expect(await mapArenaToOpenRouter("candycane")).toBeNull();
     expect(await mapArenaToOpenRouter("mumble")).toBeNull();
+  });
+
+  it("maps riftrunner to google/gemini-3-pro-preview via static table", async () => {
+    const result = await mapArenaToOpenRouter("riftrunner");
+    expect(result).not.toBeNull();
+    expect(result!.openRouterId).toBe("google/gemini-3-pro-preview");
+    expect(result!.source).toBe("static");
+    expect(result!.displayName).toBe("Gemini 3 Pro Preview");
   });
 
   it("maps via static table (tier 1)", async () => {
@@ -50,6 +59,28 @@ describe("mapArenaToOpenRouter", () => {
     const result = await mapArenaToOpenRouter("completely-unknown-model-xyz");
     expect(result).toBeNull();
   });
+
+  it("does not include displayName for non-codename models", async () => {
+    const result = await mapArenaToOpenRouter("gpt-5");
+    expect(result).not.toBeNull();
+    expect(result!.displayName).toBeUndefined();
+  });
+});
+
+describe("getCodenameDisplayName", () => {
+  it("returns display name for known codenames", () => {
+    expect(getCodenameDisplayName("riftrunner")).toBe("Gemini 3 Pro Preview");
+    expect(getCodenameDisplayName("obsidian")).toBe("Grok 4.20");
+  });
+
+  it("returns undefined for non-codename models", () => {
+    expect(getCodenameDisplayName("gpt-5")).toBeUndefined();
+    expect(getCodenameDisplayName("claude-sonnet-4-5")).toBeUndefined();
+  });
+
+  it("returns undefined for unknown codenames", () => {
+    expect(getCodenameDisplayName("candycane")).toBeUndefined();
+  });
 });
 
 describe("findFirstAvailable", () => {
@@ -67,7 +98,7 @@ describe("findFirstAvailable", () => {
 
   it("skips codename models and returns first available", async () => {
     const entries = [
-      makeEntry("riftrunner", 1350),
+      makeEntry("obsidian", 1350),
       makeEntry("candycane", 1300),
       makeEntry("claude-sonnet-4-5", 1280),
     ];
@@ -80,9 +111,22 @@ describe("findFirstAvailable", () => {
     );
   });
 
+  it("returns riftrunner as first available since it now resolves", async () => {
+    const entries = [
+      makeEntry("riftrunner", 1395),
+      makeEntry("claude-sonnet-4-5", 1280),
+    ];
+
+    const result = await findFirstAvailable(entries);
+    expect(result).not.toBeNull();
+    expect(result!.entry.modelId).toBe("riftrunner");
+    expect(result!.mapping.openRouterId).toBe("google/gemini-3-pro-preview");
+    expect(result!.mapping.displayName).toBe("Gemini 3 Pro Preview");
+  });
+
   it("returns null if no models are available", async () => {
     const entries = [
-      makeEntry("riftrunner", 1350),
+      makeEntry("obsidian", 1350),
       makeEntry("candycane", 1300),
     ];
 

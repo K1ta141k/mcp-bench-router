@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { VALID_CATEGORIES, type CategoryKey, categoryDisplayName, categoryDescription, buildCategoryParamDescription } from "../config.js";
 import { fetchLeaderboard } from "../services/leaderboard.js";
-import { mapArenaToOpenRouter } from "../services/model-mapper.js";
+import { mapArenaToOpenRouter, getCodenameDisplayName } from "../services/model-mapper.js";
 
 export const getLeaderboardSchema = {
   category: z
@@ -52,9 +52,11 @@ export async function getLeaderboard(args: {
     const e = sliced[i];
     const rank = offset + i + 1;
     const mapping = await mapArenaToOpenRouter(e.modelId);
+    const displayName = getCodenameDisplayName(e.modelId);
+    const modelLabel = displayName ? `${e.modelId} (${displayName})` : e.modelId;
     const orId = mapping ? `\`${mapping.openRouterId}\`` : "—";
     lines.push(
-      `| ${rank} | ${e.modelId} | ${e.elo} | ${e.winRate}% | ${e.battles} | ${orId} |`
+      `| ${rank} | ${modelLabel} | ${e.elo} | ${e.winRate}% | ${e.battles} | ${orId} |`
     );
   }
 

@@ -70,4 +70,5 @@ export interface ModelMapping {
   arenaId: string;
   openRouterId: string;
   source: "static" | "dynamic" | "fuzzy";
+  displayName?: string;
 }

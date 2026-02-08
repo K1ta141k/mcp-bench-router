@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { mapArenaToOpenRouter } from "../services/model-mapper.js";
+import { mapArenaToOpenRouter, getCodenameDisplayName } from "../services/model-mapper.js";
 import { chatCompletion } from "../services/openrouter.js";
 
 export const querySpecificModelSchema = {
@@ -37,6 +37,10 @@ export async function querySpecificModel(args: {
   } else {
     const mapping = await mapArenaToOpenRouter(args.model);
     if (!mapping) {
+      const displayName = getCodenameDisplayName(args.model);
+      if (displayName) {
+        return `"${args.model}" (${displayName}) is not yet available on OpenRouter. Try using a direct OpenRouter ID (e.g. "provider/model-name").`;
+      }
       return `Could not find OpenRouter mapping for model "${args.model}". This model may be a codename or unreleased. Try using a direct OpenRouter ID (e.g. "provider/model-name").`;
     }
     openRouterId = mapping.openRouterId;

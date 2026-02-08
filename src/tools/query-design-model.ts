@@ -48,7 +48,9 @@ export async function queryDesignModel(args: {
   const content = response.choices?.[0]?.message?.content ?? "(empty response)";
 
   const lines: string[] = [];
-  lines.push(`**Model:** ${best.entry.modelId} (#${rank} in ${categoryDisplayName(category)})`);
+  const displayName = best.mapping.displayName;
+  const modelLabel = displayName ? `${best.entry.modelId} (${displayName})` : best.entry.modelId;
+  lines.push(`**Model:** ${modelLabel} (#${rank} in ${categoryDisplayName(category)})`);
   lines.push(`**Category:** ${categoryDescription(category)}`);
   lines.push(`**OpenRouter ID:** \`${best.mapping.openRouterId}\``);
   lines.push(`**Elo:** ${best.entry.elo} | **Win Rate:** ${best.entry.winRate}%`);

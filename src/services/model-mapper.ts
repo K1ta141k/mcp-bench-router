@@ -47,6 +47,7 @@ const STATIC_MAP: Record<string, string> = {
   "gemini-2.5-flash-preview-09-2025": "google/gemini-2.5-flash-preview-09-2025",
   "gemini-2.5-flash-lite-preview-09-2025": "google/gemini-2.5-flash-lite-preview-09-2025",
   "gemini-3-flash-preview": "google/gemini-3-flash-preview",
+  "riftrunner": "google/gemini-3-pro-preview",
 
   // xAI
   "grok-4": "x-ai/grok-4",
@@ -112,9 +113,15 @@ const STATIC_MAP: Record<string, string> = {
   "mimo-v2-flash": "minimax/minimax-m1", // closest available
 };
 
-// Codename models with no public availability
+// Display names for codename models with confirmed identities
+const CODENAME_DISPLAY_NAMES: Record<string, string> = {
+  "riftrunner": "Gemini 3 Pro Preview",
+  "obsidian": "Grok 4.20",
+};
+
+// Codename models with no public availability on OpenRouter
 const CODENAME_MODELS = new Set([
-  "riftrunner",
+  "obsidian",
   "candycane",
   "mumble",
   "rockhopper",
@@ -137,7 +144,7 @@ export async function mapArenaToOpenRouter(
   // Tier 1: Static map
   const staticId = STATIC_MAP[arenaId];
   if (staticId) {
-    return { arenaId, openRouterId: staticId, source: "static" };
+    return { arenaId, openRouterId: staticId, source: "static", displayName: CODENAME_DISPLAY_NAMES[arenaId] };
   }
 
   // Tier 2 & 3: Dynamic lookup against OpenRouter model list
@@ -167,7 +174,7 @@ export async function mapArenaToOpenRouter(
   for (const prefix of providerPrefixes) {
     const candidate = `${prefix}/${arenaId}`;
     if (modelIdSet.has(candidate)) {
-      return { arenaId, openRouterId: candidate, source: "dynamic" };
+      return { arenaId, openRouterId: candidate, source: "dynamic", displayName: CODENAME_DISPLAY_NAMES[arenaId] };
     }
   }
 
@@ -176,11 +183,15 @@ export async function mapArenaToOpenRouter(
   for (const model of models) {
     const modelSlug = model.id.split("/").pop() ?? "";
     if (normalize(modelSlug) === normalizedArena) {
-      return { arenaId, openRouterId: model.id, source: "fuzzy" };
+      return { arenaId, openRouterId: model.id, source: "fuzzy", displayName: CODENAME_DISPLAY_NAMES[arenaId] };
     }
   }
 
   return null;
+}
+
+export function getCodenameDisplayName(arenaId: string): string | undefined {
+  return CODENAME_DISPLAY_NAMES[arenaId];
 }
 
 export async function findFirstAvailable(
